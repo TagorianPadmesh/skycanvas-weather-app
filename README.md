@@ -1,4 +1,4 @@
-# 🌦️ Weather App - Advanced React Native Weather Application
+# 🌦️ SkyCanvas - Advanced React Native Weather Application
 
 A beautiful, feature-rich weather application built with React Native and Expo, featuring dynamic backgrounds, AI-powered summaries, and comprehensive weather data.
 
@@ -80,8 +80,8 @@ A beautiful, feature-rich weather application built with React Native and Expo, 
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/weather-app.git
-   cd weather-app
+   git clone https://github.com/yourusername/skycanvas-weather-app.git
+   cd skycanvas-weather-app
    ```
 
 2. **Navigate to the client directory**
@@ -213,4 +213,4 @@ If you have any questions or need help setting up the project, please open an is
 
 ---
 
-Made with ❤️ using React Native and Expo
+**SkyCanvas** - Made with ❤️ using React Native and Expo

@@ -1,6 +1,7 @@
 {
-  "name": "client",
+  "name": "skycanvas-weather-app",
   "version": "1.0.0",
+  "description": "Advanced React Native weather app with AI summaries and dynamic backgrounds",
   "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
