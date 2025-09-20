@@ -1,0 +1,1 @@
+export { BackgroundManager } from './BackgroundManager';
