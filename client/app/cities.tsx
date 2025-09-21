@@ -347,6 +347,7 @@ export default function CitiesPage() {
         params: {
           useLocation: useLocation.toString(),
           cityName: city.name,
+          country: city.country,
           lat: city.lat.toString(),
           lon: city.lon.toString()
         }

@@ -50,8 +50,8 @@ export function HourlyScroll({ hourly, sunrise, sunset }: Props) {
           return (
             <View key={i} style={styles.hourlyCard}>
               <Text style={styles.timeText}>{getTimeString(h.time, i)}</Text>
-              <Text style={styles.iconText}>{weatherIcon}</Text>
-              <Text style={styles.tempText}>{temp}°</Text>
+              <Text style={styles.iconText}>{weatherIcon || '☀️'}</Text>
+              <Text style={styles.tempText}>{`${temp}°`}</Text>
             </View>
           );
         })}

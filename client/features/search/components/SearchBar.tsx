@@ -6,10 +6,11 @@ import { LinearGradient } from "expo-linear-gradient";
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
+  onTextChange?: (text: string) => void;
   isLoading?: boolean;
 }
 
-export function SearchBar({ onSearch, isLoading = false }: SearchBarProps) {
+export function SearchBar({ onSearch, onTextChange, isLoading = false }: SearchBarProps) {
   const [value, setValue] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const scaleAnim = useRef(new Animated.Value(1)).current;
@@ -21,8 +22,18 @@ export function SearchBar({ onSearch, isLoading = false }: SearchBarProps) {
     }
   };
   
+  const handleTextChange = (text: string) => {
+    setValue(text);
+    if (onTextChange) {
+      onTextChange(text);
+    }
+  };
+  
   const clearSearch = () => {
     setValue("");
+    if (onTextChange) {
+      onTextChange("");
+    }
   };
   
   const handleFocus = () => {
@@ -97,7 +108,7 @@ export function SearchBar({ onSearch, isLoading = false }: SearchBarProps) {
             placeholder="Search for a city or airport"
             placeholderTextColor="rgba(255,255,255,0.7)" // Balanced visibility for glassmorphism
             value={value}
-            onChangeText={setValue}
+            onChangeText={handleTextChange}
             onSubmitEditing={handleSubmit}
             onFocus={handleFocus}
             onBlur={handleBlur}

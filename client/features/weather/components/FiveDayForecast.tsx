@@ -40,11 +40,11 @@ export function FiveDayForecast({ daily }: Props) {
         return (
           <View key={i} style={[styles.dailyRow, i === daily.length - 1 && styles.lastRow]}>
             <Text style={styles.dayText}>{getDayName(d.date, i)}</Text>
-            <Text style={styles.iconText}>{weatherIcon}</Text>
+            <Text style={styles.iconText}>{weatherIcon || '☀️'}</Text>
             <View style={styles.tempContainer}>
-              <Text style={styles.lowTemp}>{min}°</Text>
+              <Text style={styles.lowTemp}>{`${min}°`}</Text>
               <View style={styles.tempBar} />
-              <Text style={styles.highTemp}>{max}°</Text>
+              <Text style={styles.highTemp}>{`${max}°`}</Text>
             </View>
           </View>
         );

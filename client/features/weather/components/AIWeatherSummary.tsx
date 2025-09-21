@@ -63,7 +63,7 @@ const AIWeatherSummary: React.FC<AIWeatherSummaryProps> = ({
           {isUsingFallback ? 'Weather Insight' : 'AI Weather Insight'}
         </Text>
       </View>
-      <Text style={styles.summary}>{summary}</Text>
+      <Text style={styles.summary}>{String(summary || '')}</Text>
       {isUsingFallback && (
         <Text style={styles.fallbackNote}>
           Personalized summaries available with active API key

@@ -53,13 +53,13 @@ const AirQualityCard: React.FC<AirQualityCardProps> = ({ current }) => {
       <View style={styles.row}>
         <View style={styles.metricContainer}>
           <Text style={styles.metricLabel}>UV Index</Text>
-          <Text style={[styles.metricValue, { color: uvLevel.color }]}>{uvIndex.toFixed(1)}</Text>
+          <Text style={[styles.metricValue, { color: uvLevel.color }]}>{(uvIndex || 0).toFixed(1)}</Text>
           <Text style={[styles.metricLevel, { color: uvLevel.color }]}>{uvLevel.level}</Text>
         </View>
         
         <View style={styles.metricContainer}>
           <Text style={styles.metricLabel}>Air Quality</Text>
-          <Text style={[styles.metricValue, { color: aqiLevel.color }]}>{aqi}</Text>
+          <Text style={[styles.metricValue, { color: aqiLevel.color }]}>{aqi || 0}</Text>
           <Text style={[styles.metricLevel, { color: aqiLevel.color }]}>{aqiLevel.level}</Text>
         </View>
       </View>
@@ -67,11 +67,11 @@ const AirQualityCard: React.FC<AirQualityCardProps> = ({ current }) => {
       <View style={styles.detailsContainer}>
         <View style={styles.detailItem}>
           <Text style={styles.detailLabel}>PM2.5:</Text>
-          <Text style={styles.detailValue}>{pm25.toFixed(1)} μg/m³</Text>
+          <Text style={styles.detailValue}>{(pm25 || 0).toFixed(1)} μg/m³</Text>
         </View>
         <View style={styles.detailItem}>
           <Text style={styles.detailLabel}>PM10:</Text>
-          <Text style={styles.detailValue}>{pm10.toFixed(1)} μg/m³</Text>
+          <Text style={styles.detailValue}>{(pm10 || 0).toFixed(1)} μg/m³</Text>
         </View>
       </View>
     </View>

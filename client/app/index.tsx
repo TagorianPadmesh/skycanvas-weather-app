@@ -1,5 +1,6 @@
-import { View, Text, ScrollView, StyleSheet, Alert, StatusBar, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Alert, StatusBar, TouchableOpacity, FlatList } from 'react-native';
 import { useState, useEffect } from 'react';
+import { useLocalSearchParams } from 'expo-router';
 import { useWeather } from '../features/weather/hooks/useWeather';
 import { useCitySearch } from '../features/search/hooks/useCitySearch';
 import { PrimaryWeatherCard } from '../features/weather/components/PrimaryWeatherCard';
@@ -17,6 +18,9 @@ import { useAuth } from '../hooks/useAuth';
 import { router } from 'expo-router';
 
 export default function HomePage() {
+  // Get navigation parameters
+  const params = useLocalSearchParams();
+  
   // Auth
   const { user, signOut } = useAuth();
   
@@ -25,13 +29,48 @@ export default function HomePage() {
   const [coords, setCoords] = useState<Coordinates>({ lat: 48.8566, lon: 2.3522 }); // Default to Paris
   const [isDetectingLocation, setIsDetectingLocation] = useState(false);
   const [hasTriedLocation, setHasTriedLocation] = useState(false);
+  const [searchResults, setSearchResults] = useState<Array<{name: string; country: string; lat: number; lon: number}>>([]);
+  const [showSearchResults, setShowSearchResults] = useState(false);
 
   // Hooks
   const { data, error, isLoading } = useWeather(coords);
   const { searchCities, isLoading: searchLoading } = useCitySearch();
 
+  // Handle navigation parameters from cities page
+  useEffect(() => {
+    if (params.lat && params.lon && params.cityName) {
+      console.log('📍 Navigation parameters detected:', params);
+      const newLat = parseFloat(Array.isArray(params.lat) ? params.lat[0] : params.lat);
+      const newLon = parseFloat(Array.isArray(params.lon) ? params.lon[0] : params.lon);
+      
+      // Only update if coordinates are actually different to prevent infinite loops
+      if (coords.lat !== newLat || coords.lon !== newLon) {
+        const paramCity: City = {
+          name: Array.isArray(params.cityName) ? params.cityName[0] : params.cityName,
+          country: Array.isArray(params.country) ? params.country[0] : (params.country || 'Unknown'),
+          lat: newLat,
+          lon: newLon,
+        };
+        
+        console.log('🎯 Setting city from navigation:', paramCity);
+        console.log('🎯 Setting coordinates:', { lat: paramCity.lat, lon: paramCity.lon });
+        setActiveCity(paramCity);
+        setCoords({ lat: paramCity.lat, lon: paramCity.lon });
+        setHasTriedLocation(true); // Skip location detection
+      }
+    } else {
+      console.log('📍 No navigation parameters detected');
+    }
+  }, [params.lat, params.lon, params.cityName, params.country]);
+
   // Try to get user location on app start
   useEffect(() => {
+    // Skip location detection if we have navigation parameters
+    if (params.lat && params.lon) {
+      setHasTriedLocation(true);
+      return;
+    }
+    
     const tryGetUserLocation = async () => {
       if (hasTriedLocation) return;
       
@@ -51,7 +90,7 @@ export default function HomePage() {
     };
 
     tryGetUserLocation();
-  }, [hasTriedLocation]);
+  }, [hasTriedLocation, params.lat, params.lon]);
 
   // Handle manual location detection
   const handleGetLocation = async () => {
@@ -78,26 +117,48 @@ export default function HomePage() {
 
   // Handle city search
   const handleSearch = async (query: string) => {
-    if (!query.trim()) return;
+    if (!query.trim()) {
+      setSearchResults([]);
+      setShowSearchResults(false);
+      return;
+    }
     
     try {
       const cities = await searchCities(query);
-      if (cities.length > 0) {
-        const selectedCity: City = {
-          name: cities[0].name,
-          country: cities[0].country,
-          lat: cities[0].lat,
-          lon: cities[0].lon,
-        };
-        setActiveCity(selectedCity);
-        setCoords({ lat: cities[0].lat, lon: cities[0].lon });
-      } else {
+      setSearchResults(cities);
+      setShowSearchResults(cities.length > 0);
+      
+      if (cities.length === 0) {
         Alert.alert('No Results', 'No cities found for your search');
       }
     } catch (error) {
       console.error('Search error:', error);
       Alert.alert('Search Error', 'Could not search for cities');
+      setSearchResults([]);
+      setShowSearchResults(false);
     }
+  };
+
+  // Handle search text change (for real-time search)
+  const handleSearchTextChange = (text: string) => {
+    if (!text.trim()) {
+      setSearchResults([]);
+      setShowSearchResults(false);
+    }
+  };
+
+  // Handle city selection from search results
+  const handleCitySelect = (city: {name: string; country: string; lat: number; lon: number}) => {
+    const selectedCity: City = {
+      name: city.name,
+      country: city.country,
+      lat: city.lat,
+      lon: city.lon,
+    };
+    setActiveCity(selectedCity);
+    setCoords({ lat: city.lat, lon: city.lon });
+    setSearchResults([]);
+    setShowSearchResults(false);
   };
 
   // Get display city (either searched city or from weather data)
@@ -204,11 +265,31 @@ export default function HomePage() {
           </View>
         </View>
         
-        <View style={styles.searchContainer}>
-          <SearchBar 
-            onSearch={handleSearch}
-            isLoading={searchLoading}
-          />
+      <View style={styles.searchContainer}>
+        <SearchBar 
+          onSearch={handleSearch} 
+          onTextChange={handleSearchTextChange}
+        />
+        {/* Search Results Dropdown */}
+        {showSearchResults && searchResults.length > 0 && (
+            <View style={styles.searchResultsContainer}>
+              <FlatList
+                data={searchResults}
+                keyExtractor={(item, index) => `${item.lat}-${item.lon}-${index}`}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={styles.searchResultItem}
+                    onPress={() => handleCitySelect(item)}
+                  >
+                    <Text style={styles.cityName}>{item.name || 'Unknown City'}</Text>
+                    <Text style={styles.countryName}>{item.country || 'Unknown Country'}</Text>
+                  </TouchableOpacity>
+                )}
+                style={styles.searchResultsList}
+                showsVerticalScrollIndicator={false}
+              />
+            </View>
+          )}
         </View>
 
         <ScrollView 
@@ -302,5 +383,32 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     textAlign: 'center',
+  },
+  searchResultsContainer: {
+    marginTop: 8,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.2)',
+    overflow: 'hidden',
+  },
+  searchResultsList: {
+    maxHeight: 200,
+  },
+  searchResultItem: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255,255,255,0.1)',
+  },
+  cityName: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  countryName: {
+    color: 'rgba(255,255,255,0.7)',
+    fontSize: 14,
+    marginTop: 2,
   },
 });

@@ -29,13 +29,13 @@ export function PrimaryWeatherCard({ city, current, weatherPayload }: Props) {
       <Text style={styles.cityName}>{displayCityName}</Text>
       
       {/* Giant Temperature Display */}
-      <Text style={styles.temperature}>{temp}°</Text>
+      <Text style={styles.temperature}>{`${temp}°`}</Text>
       
       {/* Weather Description */}
       <Text style={styles.description}>{current.weatherDescription}</Text>
       
       {/* High/Low */}
-      <Text style={styles.highLow}>H:{high}°  L:{low}°</Text>
+      <Text style={styles.highLow}>{`H:${high}°  L:${low}°`}</Text>
       
       {/* Air Quality & UV Index Card */}
       {(current.uvIndex !== undefined || current.pm25 !== undefined) && (
