@@ -91,3 +91,68 @@ export default function SignUp(){
     </LinearGradient>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  content: {
+    width: '90%',
+    maxWidth: 400,
+    alignItems: 'center',
+  },
+  title: {
+    color: '#fff',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 8,
+    textShadowColor: 'rgba(0,0,0,0.3)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
+  },
+  subtitle: {
+    color: 'rgba(255,255,255,0.9)',
+    textAlign: 'center',
+    marginBottom: 32,
+  },
+  formContainer: {
+    width: '100%',
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    borderRadius: 20,
+    padding: 24,
+  },
+  input: {
+    marginBottom: 16,
+    backgroundColor: 'rgba(255,255,255,0.95)',
+  },
+  signUpButton: {
+    marginTop: 8,
+    marginBottom: 16,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+  },
+  signUpButtonText: {
+    color: '#0984e3',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  errorText: {
+    color: '#ff6b6b',
+    marginBottom: 16,
+    textAlign: 'center',
+    backgroundColor: 'rgba(255,255,255,0.9)',
+    padding: 8,
+    borderRadius: 8,
+  },
+  linkText: {
+    color: 'rgba(255,255,255,0.9)',
+    textAlign: 'center',
+  },
+  link: {
+    color: '#fff',
+    fontWeight: 'bold',
+    textDecorationLine: 'underline',
+  },
+});
